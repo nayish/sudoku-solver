@@ -377,12 +377,28 @@ function rightSwipe() {
 
 
 function upSwipe() {
-    const el = Array.from(document.getElementsByClassName('cell'))[convertCellToPlace((currentSelected - 9 + numberOfCells) % numberOfCells)]
+    let next;
+    if (currentSelected === 0) {
+        next = 80;
+    } else if (currentSelected < 9) {
+        next = (currentSelected - 10 + numberOfCells) % numberOfCells;
+    } else {
+        next = currentSelected - 9;
+    }
+    const el = Array.from(document.getElementsByClassName('cell'))[convertCellToPlace(next)]
     el.focus();
 }
 
 function downSwipe() {
-    const el = Array.from(document.getElementsByClassName('cell'))[convertCellToPlace((currentSelected + 9) % numberOfCells)]
+    let next;
+    if (currentSelected === 80) {
+        next = 0;
+    } else if (currentSelected >= 72) {
+        next = (currentSelected + 10) % numberOfCells;
+    } else {
+        next = currentSelected + 9;
+    }
+    const el = Array.from(document.getElementsByClassName('cell'))[convertCellToPlace(next)]
     el.focus();
 }
 
