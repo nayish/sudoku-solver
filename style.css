@@ -49,3 +49,9 @@ input {
 #time  {
     margin-top: 10px;
 }
+
+.cell:focus {
+    outline-color: orange;
+    outline-width: 3px;
+    outline-style: solid;
+}
