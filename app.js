@@ -1,13 +1,6 @@
-// const input = '000000030800009150500003009007000010001806304940350020009010502608200700400708000';
-const input = ('7\t0\t0\t0\t0\t0\t0\t0\t6\n' +
-    '0\t0\t5\t0\t0\t0\t2\t0\t0\n' +
-    '0\t3\t0\t4\t0\t7\t0\t9\t0\n' +
-    '0\t0\t2\t1\t0\t8\t5\t0\t0\n' +
-    '3\t0\t0\t7\t0\t9\t0\t0\t1\n' +
-    '0\t0\t9\t2\t0\t4\t3\t0\t0\n' +
-    '0\t8\t0\t9\t0\t1\t0\t5\t0\n' +
-    '0\t0\t3\t0\t0\t0\t7\t0\t0\n' +
-    '1\t0\t0\t0\t0\t0\t0\t0\t8').replace(/\s/g, '');
+const easy = '600120384008459072000006005000264030070080006940003000310000050089700000502000190';
+const medium = '040100050107003960520008000000000017000906800803050620090060543600080700250097100';
+const hard = ('700000006005000200030407090002108500300709001009204300080901050003000700100000008');
 const waitTime = 0;
 const numberOfCells = Math.pow(3,4);
 let stop = true;
@@ -156,6 +149,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log(`solved in ${(new Date().getTime() - start) /1000}s`);
         validate(solution)
         document.getElementById('time').innerText = `solved in ${(new Date().getTime() - start) /1000}s`;
+    });
+
+    document.getElementById('easy').addEventListener('click', () => {
+        document.getElementById('input').value = easy;
+        document.getElementById('load').click();
+    });
+
+    document.getElementById('hard').addEventListener('click', () => {
+        document.getElementById('input').value = hard;
+        document.getElementById('load').click();
+    });
+
+    document.getElementById('medium').addEventListener('click', () => {
+        document.getElementById('input').value = medium;
+        document.getElementById('load').click();
     });
 });
 

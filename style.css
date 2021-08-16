@@ -9,7 +9,7 @@ body {
 .board {
     border: 3px solid black;
     display: flex;
-    width: 720px;
+    width: 675px;
     flex-wrap: wrap;
     margin: auto;
 }
@@ -30,7 +30,7 @@ body {
     display: flex;
     flex-grow: 1;
     width: 33%;
-    height: 80px;
+    height: 75px;
     margin: 0;
 }
 button {
