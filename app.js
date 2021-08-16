@@ -364,7 +364,7 @@ function handleTouchMove(evt) {
     yDown = null;
 };
 function rightSwipe() {
-    const el = Array.from(document.getElementsByClassName('cell'))[convertCellToPlace((currentSelected - 1) % numberOfCells)]
+    const el = Array.from(document.getElementsByClassName('cell'))[convertCellToPlace((currentSelected - 1 + numberOfCells) % numberOfCells)]
     el.focus();
 }
 
@@ -376,7 +376,7 @@ function leftSwipe() {
 
 
 function downSwipe() {
-    const el = Array.from(document.getElementsByClassName('cell'))[convertCellToPlace((currentSelected - 9) % numberOfCells)]
+    const el = Array.from(document.getElementsByClassName('cell'))[convertCellToPlace((currentSelected - 9 + numberOfCells) % numberOfCells)]
     el.focus();
 }
 
