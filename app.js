@@ -361,7 +361,8 @@ function handleTouchMove(evt) {
 };
 
 function rightSwipe() {
-    document.getElementsByClassName('cell')[0]=9;
+    document.getElementsByClassName('cell')[0].innerText=9;
+    alert('hey')
 }
 
 function leftSwipe() {
