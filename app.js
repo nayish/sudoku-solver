@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             value += '0';
         }
 
-        value = value.substring(0, index) + (el.innerText[0] || '') + value.substring(index + 1);
+        value = value.substring(0, index) + (el.innerText[0] || '0') + value.substring(index + 1);
         value = value.replace(/[^0-9]/g, '')
         document.getElementById('input').value = value
         document.getElementById('load').click();
