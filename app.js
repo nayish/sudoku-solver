@@ -29,9 +29,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         stop = false;
         const input = solver.toInput();
         const solution = await solver.run();
-        console.log(input);
-        console.log(solution);
-        console.log(`solved in ${(new Date().getTime() - start) /1000}s`);
         validate(solution)
         document.getElementById('time').innerText = `solved in ${(new Date().getTime() - start) /1000}s`;
     });
@@ -39,6 +36,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     Array.from(document.getElementsByClassName('cell')).forEach((el, i) => {
         el.addEventListener('focus', (ev) => {
             currentSelected = place[i];
+            document.getElementById('load').click();
         });
         el.tabIndex = place[i] + 2;
         el.addEventListener('input', (ev) => {
@@ -57,25 +55,29 @@ document.addEventListener('DOMContentLoaded', async () => {
             } else {
                 el.innerText = current;
                 document.getSelection().getRangeAt(0).setStart(el, 1);
+                document.getSelection().getRangeAt(0).setEnd(el, 1);
             }
         });
     });
 
     document.getElementById('easy').addEventListener('click', () => {
-        document.getElementById('input').value = easy;
-        document.getElementById('load').click();
+        getSudoku('easy');
     });
 
     document.getElementById('hard').addEventListener('click', () => {
-        document.getElementById('input').value = hard;
-        document.getElementById('load').click();
+        getSudoku('hard');
     });
 
     document.getElementById('medium').addEventListener('click', () => {
-        document.getElementById('input').value = medium;
-        document.getElementById('load').click();
+        getSudoku('medium');
     });
 });
+
+async function getSudoku(level) {
+    const data = await(await fetch(`https://sugoku.herokuapp.com/board?difficulty=${level}`)).json();
+    document.getElementById('input').value = data.board.map(a=> a.join('')).join('');
+    document.getElementById('load').click();
+}
 
 function validate(solution) {
     document.getElementById('run').disabled = !solver.isValid || (solution && solution.indexOf('0') === -1);
@@ -193,7 +195,6 @@ function convertCellToPlace (i) {
     const offsiteRow = Math.floor(tripleCell / 3)
     const row = 3 * startRow + offsiteRow;
     const column = 3* startColumn + offsiteColumn;
-    console.log({row, column})
     return column + row * 9;
 }
 
@@ -348,42 +349,59 @@ function handleTouchMove(evt) {
 
     if ( Math.abs( xDiff ) > Math.abs( yDiff ) ) {/*most significant*/
         if ( xDiff > 10 ) {
-            rightSwipe();
+            leftSwipe();
         } else if (xDiff < -10) {
-            leftSwipe()
+            rightSwipe()
         }
     } else {
         if ( yDiff > 10 ) {
-            downSwipe()
-        } else if ( yDiff < -10 ) {
             upSwipe()
+        } else if ( yDiff < -10 ) {
+            downSwipe()
         }
     }
     /* reset values */
     xDown = null;
     yDown = null;
 };
-function rightSwipe() {
+function leftSwipe() {
     const el = Array.from(document.getElementsByClassName('cell'))[convertCellToPlace((currentSelected - 1 + numberOfCells) % numberOfCells)]
     el.focus();
 }
 
 
-function leftSwipe() {
+function rightSwipe() {
     const el = Array.from(document.getElementsByClassName('cell'))[convertCellToPlace((currentSelected + 1) % numberOfCells)]
     el.focus();
 }
 
 
-function downSwipe() {
+function upSwipe() {
     const el = Array.from(document.getElementsByClassName('cell'))[convertCellToPlace((currentSelected - 9 + numberOfCells) % numberOfCells)]
     el.focus();
 }
 
-function upSwipe() {
+function downSwipe() {
     const el = Array.from(document.getElementsByClassName('cell'))[convertCellToPlace((currentSelected + 9) % numberOfCells)]
     el.focus();
 }
+
+document.onkeydown = function(e) {
+    switch (e.keyCode) {
+        case 37:
+            leftSwipe();
+            break;
+        case 38:
+            upSwipe();
+            break;
+        case 39:
+            rightSwipe();
+            break;
+        case 40:
+            downSwipe();
+            break;
+    }
+};
 
 
 
