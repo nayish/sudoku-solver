@@ -326,6 +326,8 @@ function getTouches(evt) {
 }
 
 function handleTouchStart(evt) {
+    alert('touch')
+    document.getElementsByClassName('cell')[0].innerText=9;
     const firstTouch = getTouches(evt)[0];
     xDown = firstTouch.clientX;
     yDown = firstTouch.clientY;
