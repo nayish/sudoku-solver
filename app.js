@@ -5,128 +5,6 @@ const waitTime = 0;
 const numberOfCells = Math.pow(3,4);
 let stop = true;
 
-class SudokuSolver {
-    constructor(input) {
-        if (input === undefined) {return}
-        this.unsolved = [];
-        this.cells = {};
-        for (let i =0; i < numberOfCells; i++) {
-            this.cells[i] = new Cell(i, this);
-        }
-        for (let i =0; i < numberOfCells; i++) {
-            const val = input[i];
-            this.cells[+i].setVal(val);
-            if (val === '0' || !val) {
-                this.unsolved.push(+i);
-            }
-        }
-
-        this.isValid = this.valid();
-    }
-
-    valid() {
-        let valid = true;
-        Object.values(this.cells).forEach(cell => {
-            console.log(cell.val, cell.getRelatedCells().map(o => this.cells[+o].val))
-            if ((cell.val && cell.getRelatedCells().map(o => this.cells[+o].val).indexOf(cell.val) > -1) ||
-                (!cell.val && cell.options.length === 0)) {
-                cell.element.style += '; background: red;';
-                valid = false;
-            }
-        })
-
-        return valid;
-    }
-
-    setAsSolved(i, val) {
-        this.cells[i].setVal(val);
-        let selfIndex = this.unsolved.indexOf(i)
-        this.unsolved.splice(selfIndex, 1);
-    }
-
-    clone() {
-        const solver = new SudokuSolver();
-        solver.isValid = this.isValid;
-        solver.unsolved = [...this.unsolved];
-        solver.cells = {};
-        Object.keys(this.cells).forEach(i => {
-            solver.cells[i] = this.cells[i].clone(solver);
-        });
-        return solver;
-    }
-
-    async run() {
-        if (!this.isValid) {
-            return;
-        }
-        let next =  this.cells[this.unsolved.shift()];
-        while (next && (next.lastUnsolved === undefined || this.unsolved.length < next.lastUnsolved) && !stop) {
-            const isSolvable = next.run();
-            if (isSolvable === -1) {
-                this.isValid = this.valid()
-                return;
-            }
-            if (!next.val) {
-                this.unsolved.push(next.i);
-            }
-            next =  this.cells[this.unsolved.shift()];
-            await new Promise(r => setTimeout(r, waitTime));
-        }
-
-        if (stop) {
-            return false;
-        }
-
-        if (this.isDone()) {
-            return this.toInput();
-        }
-        if (next) {
-            this.unsolved.push(next.i);
-        }
-
-        let minVal = 10;
-        let minCell = undefined;
-
-        this.unsolved.forEach((i) => {
-           const opts = this.cells[i].options.length;
-           if (opts < minVal) {
-               minVal = opts;
-               minCell = i;
-           }
-        });
-
-        for (let i=0; i<this.cells[minCell].options.length; i++) {
-            const op = this.cells[minCell].options[i];
-
-            // const newSolver1 = this.clone();
-            // newSolver1.setAsSolved(minCell, op);
-            // newSolver1.print();
-
-            const input1 = this.toInput().split('').map((a, i) => (i === minCell) ? op : a).join('');
-            const newSolver2 = new SudokuSolver(input1);
-
-            const solution = await newSolver2.run();
-
-            if (solution) {
-                return solution;
-            }
-        }
-        this.isValid = false;
-    }
-
-    print() {
-        Object.values(this.cells).forEach(cell => cell.print());
-    }
-
-    isDone() {
-        return this.unsolved.length === 0;
-    }
-
-    toInput() {
-        return Object.values(this.cells).map(c => c.val || '0').join('');
-    }
-}
-
 let solver;
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -143,6 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('run').addEventListener('click', async () => {
         const start = new Date().getTime();
         stop = false;
+        const input = solver.toInput();
         const solution = await solver.run();
         console.log(input);
         console.log(solution);
@@ -150,6 +29,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         validate(solution)
         document.getElementById('time').innerText = `solved in ${(new Date().getTime() - start) /1000}s`;
     });
+
+    Array.from(document.getElementsByClassName('cell')).forEach((el, i) => el.addEventListener('input', () => {
+        let value = document.getElementById('input').value.replace(/[^0-9]/g, '')
+        const index = convertCellToPlace(i)
+        while (value.length < index) {
+            value += '0';
+        }
+
+        value = value.substring(0, index) + (el.innerText[0] || '') + value.substring(index + 1);
+        value = value.replace(/[^0-9]/g, '')
+        document.getElementById('input').value = value
+        document.getElementById('load').click();
+        el.innerText = value[index] || '';
+    }));
 
     document.getElementById('easy').addEventListener('click', () => {
         document.getElementById('input').value = easy;
@@ -168,7 +61,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 function validate(solution) {
-    console.log(solver.isValid);
     document.getElementById('run').disabled = !solver.isValid || (solution && solution.indexOf('0') === -1);
     document.getElementById('error').style = solver.isValid ? "display: none;": '';
 }
@@ -265,6 +157,141 @@ class Cell {
         } else if (this.options.length === 0) {
             return -1;
         }
+    }
+}
+
+function convertCellToPlace (i) {
+    const triple = Math.floor(i / 9)
+    const tripleCell = i % 9
+
+    const startColumn = triple % 3
+    const offsiteColumn = tripleCell % 3
+    const startRow = Math.floor(triple / 3)
+    const offsiteRow = Math.floor(tripleCell / 3)
+    const row = 3 * startRow + offsiteRow;
+    const column = 3* startColumn + offsiteColumn;
+    console.log({row, column})
+    return column + row * 9;
+}
+
+class SudokuSolver {
+    constructor(input) {
+        if (input === undefined) {return}
+        this.unsolved = [];
+        this.cells = {};
+        for (let i =0; i < numberOfCells; i++) {
+            this.cells[i] = new Cell(i, this);
+        }
+        for (let i =0; i < numberOfCells; i++) {
+            const val = input[i];
+            this.cells[+i].setVal(val);
+            if (val === '0' || !val) {
+                this.unsolved.push(+i);
+            }
+        }
+
+        this.isValid = this.valid();
+    }
+
+    valid() {
+        let valid = true;
+        Object.values(this.cells).forEach(cell => {
+            if ((cell.val && cell.getRelatedCells().map(o => this.cells[+o].val).indexOf(cell.val) > -1) ||
+                (!cell.val && cell.options.length === 0)) {
+                cell.element.style += '; background: red;';
+                valid = false;
+            }
+        })
+
+        return valid;
+    }
+
+    setAsSolved(i, val) {
+        this.cells[i].setVal(val);
+        let selfIndex = this.unsolved.indexOf(i)
+        this.unsolved.splice(selfIndex, 1);
+    }
+
+    clone() {
+        const solver = new SudokuSolver();
+        solver.isValid = this.isValid;
+        solver.unsolved = [...this.unsolved];
+        solver.cells = {};
+        Object.keys(this.cells).forEach(i => {
+            solver.cells[i] = this.cells[i].clone(solver);
+        });
+        return solver;
+    }
+
+    async run() {
+        if (!this.isValid) {
+            return;
+        }
+        let next =  this.cells[this.unsolved.shift()];
+        while (next && (next.lastUnsolved === undefined || this.unsolved.length < next.lastUnsolved) && !stop) {
+            const isSolvable = next.run();
+            if (isSolvable === -1) {
+                this.isValid = this.valid()
+                return;
+            }
+            if (!next.val) {
+                this.unsolved.push(next.i);
+            }
+            next =  this.cells[this.unsolved.shift()];
+            await new Promise(r => setTimeout(r, waitTime));
+        }
+
+        if (stop) {
+            return false;
+        }
+
+        if (this.isDone()) {
+            return this.toInput();
+        }
+        if (next) {
+            this.unsolved.push(next.i);
+        }
+
+        let minVal = 10;
+        let minCell = undefined;
+
+        this.unsolved.forEach((i) => {
+            const opts = this.cells[i].options.length;
+            if (opts < minVal) {
+                minVal = opts;
+                minCell = i;
+            }
+        });
+
+        for (let i=0; i<this.cells[minCell].options.length; i++) {
+            const op = this.cells[minCell].options[i];
+
+            // const newSolver1 = this.clone();
+            // newSolver1.setAsSolved(minCell, op);
+            // newSolver1.print();
+
+            const input1 = this.toInput().split('').map((a, i) => (i === minCell) ? op : a).join('');
+            const newSolver2 = new SudokuSolver(input1);
+
+            const solution = await newSolver2.run();
+
+            if (solution) {
+                return solution;
+            }
+        }
+        this.isValid = false;
+    }
+
+    print() {
+        Object.values(this.cells).forEach(cell => cell.print());
+    }
+
+    isDone() {
+        return this.unsolved.length === 0;
+    }
+
+    toInput() {
+        return Object.values(this.cells).map(c => c.val || '0').join('');
     }
 }
 
