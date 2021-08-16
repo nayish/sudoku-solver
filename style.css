@@ -1,0 +1,35 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    text-align: center;
+}
+
+.board {
+    border: 3px solid black;
+    display: flex;
+    width: 720px;
+    flex-wrap: wrap;
+    margin: auto;
+}
+
+.triple {
+    border: 2px solid black;
+    flex-wrap: wrap;
+    display: flex;
+    flex-grow: 1;
+    width: 33%;
+}
+.cell {
+
+    font-size: 30px;
+    border: 1px solid black;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-grow: 1;
+    width: 33%;
+    height: 80px;
+    margin: 0;
+}
