@@ -4,6 +4,7 @@ const hard = ('70000000600500020003040709000210850030070900100920430008090105000
 const waitTime = 0;
 const numberOfCells = Math.pow(3,4);
 let stop = true;
+let currentSelected = 0;
 
 let solver;
 
@@ -36,6 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     Array.from(document.getElementsByClassName('cell')).forEach((el, i) => {
+        currentSelected = i;
         el.tabIndex = place[i] + 2;
         el.addEventListener('input', (ev) => {
             let value = document.getElementById('input').value.replace(/[^0-9]/g, '')
@@ -361,8 +363,7 @@ function handleTouchMove(evt) {
 };
 
 function rightSwipe() {
-    document.getElementsByClassName('cell')[0].innerText=9;
-    alert('hey')
+    solver.cells[(currentSelected + 1)%numberOfCells].focus();
 }
 
 function leftSwipe() {
