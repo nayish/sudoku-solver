@@ -32,7 +32,6 @@ body {
     width: 33%;
     height: 75px;
     margin: 0;
-    line-height: 75px;
 }
 button {
     font-size: 20px;
@@ -51,7 +50,9 @@ input {
 }
 
 .cell:focus {
-    outline-color: orange;
-    outline-width: 3px;
+    border: 5px solid orange;
+    /*outline-color: orange;*/
+    outline-width: 0;
     outline-style: solid;
+    line-height: 65px;
 }
