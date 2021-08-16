@@ -9,7 +9,7 @@ body {
 .board {
     border: 3px solid black;
     display: flex;
-    width: 540px;
+    width: 720px;
     flex-wrap: wrap;
     margin: auto;
 }
@@ -23,15 +23,21 @@ body {
 }
 .cell {
 
-    font-size: 20px;
+    font-size: 25px;
     border: 1px solid black;
     align-items: center;
     justify-content: center;
     display: flex;
     flex-grow: 1;
     width: 33%;
-    height: 60px;
+    height: 80px;
     margin: 0;
+}
+button {
+    font-size: 20px;
+}
+input {
+    font-size: 20px;
 }
 
 #error {
