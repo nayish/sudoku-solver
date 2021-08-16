@@ -347,15 +347,15 @@ function handleTouchMove(evt) {
     var yDiff = yDown - yUp;
 
     if ( Math.abs( xDiff ) > Math.abs( yDiff ) ) {/*most significant*/
-        if ( xDiff > 0 ) {
+        if ( xDiff > 10 ) {
             rightSwipe();
-        } else {
+        } else if (xDiff < -10) {
             leftSwipe()
         }
     } else {
-        if ( yDiff > 0 ) {
+        if ( yDiff > 10 ) {
             downSwipe()
-        } else {
+        } else if ( yDiff < -10 ) {
             upSwipe()
         }
     }
@@ -376,12 +376,12 @@ function leftSwipe() {
 
 
 function downSwipe() {
-    const el = Array.from(document.getElementsByClassName('cell'))[convertCellToPlace((currentSelected + 9) % numberOfCells)]
+    const el = Array.from(document.getElementsByClassName('cell'))[convertCellToPlace((currentSelected - 9) % numberOfCells)]
     el.focus();
 }
 
 function upSwipe() {
-    const el = Array.from(document.getElementsByClassName('cell'))[convertCellToPlace((currentSelected - 9) % numberOfCells)]
+    const el = Array.from(document.getElementsByClassName('cell'))[convertCellToPlace((currentSelected + 9) % numberOfCells)]
     el.focus();
 }
 
