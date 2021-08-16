@@ -363,6 +363,7 @@ function handleTouchMove(evt) {
 };
 
 function rightSwipe() {
+    alert((currentSelected + 1) % numberOfCells);
     solver.cells[(currentSelected + 1)%numberOfCells].element.innerText='1'
     solver.cells[(currentSelected + 1)%numberOfCells].element.focus();
 }
