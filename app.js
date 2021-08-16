@@ -37,7 +37,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     Array.from(document.getElementsByClassName('cell')).forEach((el, i) => {
-        currentSelected = i;
+        el.addEventListener('focus', (ev) => {
+            currentSelected = place[i];
+        });
         el.tabIndex = place[i] + 2;
         el.addEventListener('input', (ev) => {
             let value = document.getElementById('input').value.replace(/[^0-9]/g, '')
@@ -361,24 +363,26 @@ function handleTouchMove(evt) {
     xDown = null;
     yDown = null;
 };
-
 function rightSwipe() {
-    alert((currentSelected + 1) % numberOfCells);
-    solver.cells[(currentSelected + 1)%numberOfCells].element.innerText='1'
-    solver.cells[(currentSelected + 1)%numberOfCells].element.focus();
+    const el = Array.from(document.getElementsByClassName('cell'))[convertCellToPlace((currentSelected - 1) % numberOfCells)]
+    el.focus();
 }
 
-function leftSwipe() {
 
+function leftSwipe() {
+    const el = Array.from(document.getElementsByClassName('cell'))[convertCellToPlace((currentSelected + 1) % numberOfCells)]
+    el.focus();
 }
 
 
 function downSwipe() {
-
+    const el = Array.from(document.getElementsByClassName('cell'))[convertCellToPlace((currentSelected + 9) % numberOfCells)]
+    el.focus();
 }
 
 function upSwipe() {
-
+    const el = Array.from(document.getElementsByClassName('cell'))[convertCellToPlace((currentSelected - 9) % numberOfCells)]
+    el.focus();
 }
 
 
