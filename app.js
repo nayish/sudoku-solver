@@ -10,22 +10,41 @@ const input = ('7\t0\t0\t0\t0\t0\t0\t0\t6\n' +
     '1\t0\t0\t0\t0\t0\t0\t0\t8').replace(/\s/g, '');
 const waitTime = 0;
 const numberOfCells = Math.pow(3,4);
+let stop = true;
 
 class SudokuSolver {
     constructor(input) {
-        if (!input) {return}
+        if (input === undefined) {return}
         this.unsolved = [];
         this.cells = {};
         for (let i =0; i < numberOfCells; i++) {
             this.cells[i] = new Cell(i, this);
         }
-        input.split('').forEach((val, i) => {
+        for (let i =0; i < numberOfCells; i++) {
+            const val = input[i];
             this.cells[+i].setVal(val);
-            if (val === '0') {
+            if (val === '0' || !val) {
                 this.unsolved.push(+i);
             }
-        });
+        }
+
+        this.isValid = this.valid();
     }
+
+    valid() {
+        let valid = true;
+        Object.values(this.cells).forEach(cell => {
+            console.log(cell.val, cell.getRelatedCells().map(o => this.cells[+o].val))
+            if ((cell.val && cell.getRelatedCells().map(o => this.cells[+o].val).indexOf(cell.val) > -1) ||
+                (!cell.val && cell.options.length === 0)) {
+                cell.element.style += '; background: red;';
+                valid = false;
+            }
+        })
+
+        return valid;
+    }
+
     setAsSolved(i, val) {
         this.cells[i].setVal(val);
         let selfIndex = this.unsolved.indexOf(i)
@@ -34,6 +53,7 @@ class SudokuSolver {
 
     clone() {
         const solver = new SudokuSolver();
+        solver.isValid = this.isValid;
         solver.unsolved = [...this.unsolved];
         solver.cells = {};
         Object.keys(this.cells).forEach(i => {
@@ -43,10 +63,14 @@ class SudokuSolver {
     }
 
     async run() {
+        if (!this.isValid) {
+            return;
+        }
         let next =  this.cells[this.unsolved.shift()];
-        while (next && (next.lastUnsolved === undefined || this.unsolved.length < next.lastUnsolved)) {
+        while (next && (next.lastUnsolved === undefined || this.unsolved.length < next.lastUnsolved) && !stop) {
             const isSolvable = next.run();
             if (isSolvable === -1) {
+                this.isValid = this.valid()
                 return;
             }
             if (!next.val) {
@@ -54,6 +78,10 @@ class SudokuSolver {
             }
             next =  this.cells[this.unsolved.shift()];
             await new Promise(r => setTimeout(r, waitTime));
+        }
+
+        if (stop) {
+            return false;
         }
 
         if (this.isDone()) {
@@ -77,25 +105,20 @@ class SudokuSolver {
         for (let i=0; i<this.cells[minCell].options.length; i++) {
             const op = this.cells[minCell].options[i];
 
-            const newSolver1 = this.clone();
-            newSolver1.setAsSolved(minCell, op);
-            newSolver1.unsolved.sort((a,b) => a-b)//.sort((a,b) => newSolver1.cells[+b].options.length-newSolver1.cells[+a].options.length)
-            newSolver1.print();
+            // const newSolver1 = this.clone();
+            // newSolver1.setAsSolved(minCell, op);
+            // newSolver1.print();
 
             const input1 = this.toInput().split('').map((a, i) => (i === minCell) ? op : a).join('');
             const newSolver2 = new SudokuSolver(input1);
-            newSolver2.unsolved.sort((a,b) => a-b)//.sort((a,b) => newSolver2.cells[+b].options.length-newSolver2.cells[+a].options.length)
 
-
-            console.log(newSolver2.toInput(), newSolver1.toInput(), newSolver2.toInput() === newSolver1.toInput());
-            console.log(newSolver2.unsolved, newSolver1.unsolved, newSolver2.unsolved.join(',') === newSolver1.unsolved.join(','));
-
-            const solution = await newSolver1.run();
+            const solution = await newSolver2.run();
 
             if (solution) {
                 return solution;
             }
         }
+        this.isValid = false;
     }
 
     print() {
@@ -111,14 +134,36 @@ class SudokuSolver {
     }
 }
 
+let solver;
+
 document.addEventListener('DOMContentLoaded', async () => {
-    const solver = new SudokuSolver(input);
-    const start = new Date().getTime();
-    const solution = await solver.run();
-    console.log(input);
-    console.log(solution);
-    console.log(`solved in ${(new Date().getTime() - start) /1000}s`);
+    document.getElementById('load').addEventListener('click', () => {
+        document.getElementById('time').innerText = '';
+        stop = true;
+        let moo =  document.getElementById('input').value.replace(/[^0-9]/g, '');
+        document.getElementById('input').value = moo
+        solver = new SudokuSolver(moo);
+        validate()
+
+    });
+
+    document.getElementById('run').addEventListener('click', async () => {
+        const start = new Date().getTime();
+        stop = false;
+        const solution = await solver.run();
+        console.log(input);
+        console.log(solution);
+        console.log(`solved in ${(new Date().getTime() - start) /1000}s`);
+        validate(solution)
+        document.getElementById('time').innerText = `solved in ${(new Date().getTime() - start) /1000}s`;
+    });
 });
+
+function validate(solution) {
+    console.log(solver.isValid);
+    document.getElementById('run').disabled = !solver.isValid || (solution && solution.indexOf('0') === -1);
+    document.getElementById('error').style = solver.isValid ? "display: none;": '';
+}
 
 
 class Cell {
@@ -129,10 +174,10 @@ class Cell {
         this.options = '123456789'.split('');
         this.row = Math.floor(this.i / 9);
         this.cell = i % 9;
-        const triple = Math.floor(this.row / 3) * 3 + Math.floor(this.cell / 3);
+        this.triple = Math.floor(this.row / 3) * 3 + Math.floor(this.cell / 3);
         const tripleCell = (this.row % 3) *3 + this.cell % 3;
-        this.setRelatedCells(triple);
-        this.element = document.getElementsByClassName('triple')[triple].getElementsByClassName('cell')[tripleCell];
+        this.relatedCells = this.getRelatedCells();
+        this.element = document.getElementsByClassName('triple')[this.triple].getElementsByClassName('cell')[tripleCell];
     }
 
     clone(solver) {
@@ -140,6 +185,7 @@ class Cell {
         cell.i = this.i;
         cell.val = this.val;
         cell.solver = solver;
+        cell.triple = this.triple;
         cell.options = [...this.options];
         cell.relatedCells = [...this.relatedCells];
         cell.element = this.element;
@@ -148,19 +194,21 @@ class Cell {
         return cell;
     }
 
-    setRelatedCells(triple) {
-        this.relatedCells = [];
-        this.tripleStart = (Math.floor(triple / 3)) * 27 + (triple % 3) * 3
+    getRelatedCells(triple) {
+        let relatedCells = [];
+        this.tripleStart = (Math.floor(this.triple / 3)) * 27 + (this.triple % 3) * 3
         for (let i = 0; i < 9; i++) {
-            this.relatedCells.push(this.row * 9 + i)
-            this.relatedCells.push(i * 9 + this.cell)
-            this.relatedCells.push(this.tripleStart + Math.floor(i / 3)*9 + i % 3)
+            relatedCells.push(this.row * 9 + i)
+            relatedCells.push(i * 9 + this.cell)
+            relatedCells.push(this.tripleStart + Math.floor(i / 3)*9 + i % 3)
         }
-        let selfIndex = this.relatedCells.indexOf(this.i)
+        let selfIndex = relatedCells.indexOf(this.i)
         while (selfIndex !== -1) {
-            this.relatedCells.splice(selfIndex, 1);
-            selfIndex = this.relatedCells.indexOf(this.i)
+            relatedCells.splice(selfIndex, 1);
+            selfIndex = relatedCells.indexOf(this.i)
         }
+
+        return relatedCells;
     }
 
     setVal(val) {
