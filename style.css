@@ -32,6 +32,7 @@ body {
     width: 33%;
     height: 75px;
     margin: 0;
+    line-height: 75px;
 }
 button {
     font-size: 20px;

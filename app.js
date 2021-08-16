@@ -7,6 +7,11 @@ let stop = true;
 
 let solver;
 
+const place = {};
+for (let i=0;i<numberOfCells;i++) {
+    place[convertCellToPlace(i)] = i;
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('load').addEventListener('click', () => {
         document.getElementById('time').innerText = '';
@@ -30,18 +35,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('time').innerText = `solved in ${(new Date().getTime() - start) /1000}s`;
     });
 
-    Array.from(document.getElementsByClassName('cell')).forEach((el, i) => el.addEventListener('input', () => {
-        let value = document.getElementById('input').value.replace(/[^0-9]/g, '')
-        const index = convertCellToPlace(i)
-        while (value.length < index) {
-            value += '0';
-        }
+    Array.from(document.getElementsByClassName('cell')).forEach((el, i) => {
+        el.tabIndex = place[i] + 2;
+        el.addEventListener('input', (ev) => {
+            let value = document.getElementById('input').value.replace(/[^0-9]/g, '')
+            const index = convertCellToPlace(i)
+            while (value.length < index) {
+                value += '0';
+            }
+            const current = ((ev.data && ev.data[0]) || el.innerText[el.innerText.length-1] || '0').replace(/[^0-9]/g, '0')
 
-        value = value.substring(0, index) + (el.innerText[0] || '0').replace(/[^0-9]/g, '0') + value.substring(index + 1);
-        document.getElementById('input').value = value
-        document.getElementById('load').click();
-        el.innerText = value[index] === '0' ? '' : value[index];
-    }));
+            value = value.substring(0, index) + current + value.substring(index + 1);
+            document.getElementById('input').value = value
+            document.getElementById('load').click();
+            if (current === '0') {
+                el.innerText = '';
+            } else {
+                el.innerText = current;
+                document.getSelection().getRangeAt(0).setStart(el, 1);
+            }
+        });
+    });
 
     document.getElementById('easy').addEventListener('click', () => {
         document.getElementById('input').value = easy;
@@ -121,7 +135,13 @@ class Cell {
     }
 
     print() {
-        this.element.innerText = !!this.val ? this.val : '';
+        if (!this.val) {
+            this.element.innerText = ''
+            return;
+        }
+        if (document.activeElement !== this.element) {
+            this.element.innerText = this.val;
+        }
     }
 
     removeOption(val) {
@@ -137,7 +157,7 @@ class Cell {
     }
 
     setBg() {
-        let style = `background: rgba(0,0,256,${(this.options.length/9*0.8).toFixed(1)});`
+        let style = `background: rgba(0,0,256,${(this.options.length/9*0.7).toFixed(1)});`
         this.element.style = style;
     }
 
