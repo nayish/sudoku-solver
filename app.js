@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         value = value.substring(0, index) + (el.innerText[0] || '0').replace(/[^0-9]/g, '0') + value.substring(index + 1);
         document.getElementById('input').value = value
         document.getElementById('load').click();
-        el.innerText = value[index] || '';
+        el.innerText = value[index] === '0' ? '' : value[index];
     }));
 
     document.getElementById('easy').addEventListener('click', () => {
