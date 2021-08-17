@@ -21,8 +21,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         currentSelected = state.currentSelected;
         document.getElementById('input').value = state.input;
         document.getElementById('load').click();
-    } catch {
-
+    } catch (e) {
+        alert(e);
     }
 
     document.getElementById('load').addEventListener('click', () => {
