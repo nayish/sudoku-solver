@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         currentSelected = state.currentSelected;
         document.getElementById('input').value = state.input;
         document.getElementById('load').click();
-        setTimeout(() => document.getElementsByClassName('cell'))[convertCellToPlace(currentSelected)].focus(), 0);
+        setTimeout(() => document.getElementsByClassName('cell')[convertCellToPlace(currentSelected)].focus(), 0);
     } catch (e) {
 
         alert(e);
