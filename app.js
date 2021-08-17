@@ -14,11 +14,15 @@ for (let i=0;i<numberOfCells;i++) {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+
+
     document.getElementById('load').addEventListener('click', () => {
         document.getElementById('time').innerText = '';
         stop = true;
         let moo =  document.getElementById('input').value.replace(/[^0-9]/g, '');
         document.getElementById('input').value = moo
+
+        setTimeout(() => window.localStorage.setItem('myCat', JSON.stringify({input: moo, currentSelected})), 0);
         solver = new SudokuSolver(moo);
         validate()
 
