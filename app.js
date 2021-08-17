@@ -14,7 +14,16 @@ for (let i=0;i<numberOfCells;i++) {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const stateJson = window.localStorage.getItem('state');
+        const state = JSON.parse(stateJson);
 
+        currentSelected = state.currentSelected;
+        document.getElementById('input').value = state.input;
+        document.getElementById('load').click();
+    } catch {
+
+    }
 
     document.getElementById('load').addEventListener('click', () => {
         document.getElementById('time').innerText = '';
@@ -22,7 +31,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         let moo =  document.getElementById('input').value.replace(/[^0-9]/g, '');
         document.getElementById('input').value = moo
 
-        setTimeout(() => window.localStorage.setItem('myCat', JSON.stringify({input: moo, currentSelected})), 0);
+        setTimeout(() => window.localStorage.setItem('state', JSON.stringify({input: moo, currentSelected})), 0);
         solver = new SudokuSolver(moo);
         validate()
 
