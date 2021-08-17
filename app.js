@@ -81,7 +81,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         currentSelected = state.currentSelected;
         document.getElementById('input').value = state.input;
         document.getElementById('load').click();
-        setTimeout(() => document.getElementsByClassName('cell')[convertCellToPlace(currentSelected)].focus(), 0);
+        setTimeout(() => {
+            const el = document.getElementsByClassName('cell')[convertCellToPlace(currentSelected)];
+            el.focus();
+            el.setSelectionRange(0,0);
+        }, 0);
     } catch (e) {
 
         alert(e);
