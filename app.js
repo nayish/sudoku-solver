@@ -14,17 +14,6 @@ for (let i=0;i<numberOfCells;i++) {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        const stateJson = window.localStorage.getItem('state');
-        const state = JSON.parse(stateJson);
-
-        currentSelected = state.currentSelected;
-        document.getElementById('input').value = state.input;
-        document.getElementById('load').click();
-    } catch (e) {
-        alert(e);
-    }
-
     document.getElementById('load').addEventListener('click', () => {
         document.getElementById('time').innerText = '';
         stop = true;
@@ -84,6 +73,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('medium').addEventListener('click', () => {
         getSudoku('medium');
     });
+
+    try {
+        const stateJson = window.localStorage.getItem('state');
+        const state = JSON.parse(stateJson);
+
+        currentSelected = state.currentSelected;
+        document.getElementById('input').value = state.input;
+        document.getElementById('load').click();
+    } catch (e) {
+        alert(e);
+    }
 });
 
 async function getSudoku(level) {
