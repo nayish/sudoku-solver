@@ -74,10 +74,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         getSudoku('medium');
     });
 
-    document.getElementById('clear').addEventListener('click', () => {
-        document.getElementById('input').value = '';
-        document.getElementById('load').click();
-    });
+   // document.getElementById('clear').addEventListener('click', () => {
+  //      document.getElementById('input').value = '';
+  //      document.getElementById('load').click();
+  //  });
 
     try {
         const stateJson = window.localStorage.getItem('state');
