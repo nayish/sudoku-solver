@@ -85,15 +85,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         currentSelected = state.currentSelected;
         document.getElementById('input').value = state.input;
-        document.getElementById('load').click();
         //setTimeout(() => {
             const el = document.getElementsByClassName('cell')[convertCellToPlace(currentSelected)];
             el.focus();
             el.setSelectionRange(0,0);
         //}, 0);
-    } catch (e) {
-        document.getElementById('load').click();
+    } catch {
+        //
     }
+
+    document.getElementById('load').click();
 });
 
 async function getSudoku(level) {
