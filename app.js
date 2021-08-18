@@ -77,6 +77,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('clear').addEventListener('click', () => {
         document.getElementById('input').value = '';
         document.getElementById('load').click();
+alert("clear");
     });
 
     try {
