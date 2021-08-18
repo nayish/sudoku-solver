@@ -74,6 +74,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         getSudoku('medium');
     });
 
+    document.getElementById('clear').addEventListener('click', () => {
+        document.getElementById('input').value = '';
+        document.getElementById('load').click();
+    });
+
     try {
         const stateJson = window.localStorage.getItem('state');
         const state = JSON.parse(stateJson);
@@ -81,14 +86,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         currentSelected = state.currentSelected;
         document.getElementById('input').value = state.input;
         document.getElementById('load').click();
-        setTimeout(() => {
+        //setTimeout(() => {
             const el = document.getElementsByClassName('cell')[convertCellToPlace(currentSelected)];
             el.focus();
             el.setSelectionRange(0,0);
-        }, 0);
+        //}, 0);
     } catch (e) {
-
-        alert(e);
+        document.getElementById('load').click();
     }
 });
 
