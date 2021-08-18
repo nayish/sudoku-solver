@@ -9,7 +9,7 @@ body {
 .board {
     border: 3px solid black;
     display: flex;
-    width: 675px;
+    width: 900px;
     flex-wrap: wrap;
     margin: auto;
 }
@@ -23,14 +23,14 @@ body {
 }
 .cell {
 
-    font-size: 25px;
+    font-size: 30px;
     border: 1px solid black;
     align-items: center;
     justify-content: center;
     display: flex;
     flex-grow: 1;
     width: 33%;
-    height: 75px;
+    height: 100px;
     margin: 0;
 }
 button {
@@ -54,5 +54,5 @@ input {
     /*outline-color: orange;*/
     outline-width: 0;
     outline-style: solid;
-    line-height: 65px;
+    line-height: 90px;
 }
