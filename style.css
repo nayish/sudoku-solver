@@ -22,7 +22,6 @@ body {
     width: 33%;
 }
 .cell {
-
     font-size: 30px;
     border: 1px solid black;
     align-items: center;
@@ -55,4 +54,14 @@ input {
     outline-width: 0;
     outline-style: solid;
     line-height: 90px;
+}
+
+@media screen and (min-device-width: 1200px) {
+    .board {
+        width: 630px;
+    }
+
+    .cell {
+        height: 70px;
+    }
 }
