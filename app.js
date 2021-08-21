@@ -389,40 +389,27 @@ function handleTouchMove(evt) {
     xDown = null;
     yDown = null;
 };
+
 function leftSwipe() {
-    const el = Array.from(document.getElementsByClassName('cell'))[convertCellToPlace((currentSelected - 1 + numberOfCells) % numberOfCells)]
+    const next = (currentSelected % 9 === 0)? currentSelected + 8 : (currentSelected - 1) % numberOfCells;
+    const el = Array.from(document.getElementsByClassName('cell'))[convertCellToPlace(next)]
     el.focus();
 }
-
 
 function rightSwipe() {
-    const el = Array.from(document.getElementsByClassName('cell'))[convertCellToPlace((currentSelected + 1) % numberOfCells)]
+    const next = (currentSelected % 9 === 8)? currentSelected - 8 : (currentSelected + 1) % numberOfCells;
+    const el = Array.from(document.getElementsByClassName('cell'))[convertCellToPlace(next)]
     el.focus();
 }
 
-
 function upSwipe() {
-    let next;
-    if (currentSelected === 0) {
-        next = 80;
-    } else if (currentSelected < 9) {
-        next = (currentSelected - 10 + numberOfCells) % numberOfCells;
-    } else {
-        next = currentSelected - 9;
-    }
+    const next = (currentSelected - 9 + numberOfCells) % numberOfCells;
     const el = Array.from(document.getElementsByClassName('cell'))[convertCellToPlace(next)]
     el.focus();
 }
 
 function downSwipe() {
-    let next;
-    if (currentSelected === 80) {
-        next = 0;
-    } else if (currentSelected >= 72) {
-        next = (currentSelected + 10) % numberOfCells;
-    } else {
-        next = currentSelected + 9;
-    }
+    const next = (currentSelected + 9 + numberOfCells) % numberOfCells;
     const el = Array.from(document.getElementsByClassName('cell'))[convertCellToPlace(next)]
     el.focus();
 }
