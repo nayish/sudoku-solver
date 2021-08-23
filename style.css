@@ -69,4 +69,8 @@ input {
     .cell {
         height: 70px;
     }
+
+    .cell:focus {
+        line-height: 70px;
+    }
 }
